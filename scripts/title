@@ -1,0 +1,62 @@
+#!/usr/bin/env awk -f
+
+# Parse the title of a Markdown document.
+
+# TODO: Strip trailing spaces from multi-line titles.
+#
+# Input ('_' indicates a space):
+#
+#   This_is_a___
+#   multi-line_title
+#   ================
+#
+# Output:
+#
+#   This_is_a____multi-line_title
+#
+
+# Set file ordinal.
+FNR == 1 {
+  N += 1
+}
+
+# ATX-style header.
+/^#+[ ]*.*[ ]*$/ {
+  if (title[N] == "") {
+    sub(/^#+[ ]*/, "")
+    title[N] = $0
+    found[N] = 1
+  }
+  nextfile
+}
+
+# Empty line.
+$0 == "" {
+  if (title[N] == "")
+    next
+  nextfile
+}
+
+# Setext header marker.
+/^(=+|-+)$/ {
+  found[N] = 1
+  nextfile
+}
+
+# Maybe part of title.
+{
+  if (title[N] == "") {
+    title[N] = $0
+  } else {
+    title[N] = title[N] " " $0
+  }
+}
+
+END {
+  # Print titles in order.
+  for (n = 1; n <= N; n++) {
+    if (found[n]) {
+      print title[n]
+    }
+  }
+}

@@ -1,0 +1,72 @@
+#!/usr/bin/env awk -f
+
+# Parse the "title" of a Markdown document.
+
+BEGIN {
+  # We trim long titles.
+  MAX_LENGTH = 100
+}
+
+function strip() {
+  # Strip unnecessary space from a line.
+  gsub(/[ ]+/, " ") # inner
+  sub(/^[ ]/, "")   # leading
+  sub(/[ ]$/, "")   # trailing
+}
+
+# Compute file ordinal.
+FNR == 1 { N += 1 }
+
+# Stop if the title is already too long.
+length(title[N]) > MAX_LENGTH {
+  found[N] = 1
+  nextfile
+}
+
+# ATX-style header.
+/^#+[ ]*[^ ]+/ {
+  if (title[N] == "") {
+    strip()
+    sub(/^#+[ ]*/, "")
+    title[N] = $0
+    found[N] = 1
+  }
+  nextfile
+}
+
+# Empty line.
+$0 == "" {
+  if (title[N] != "") {
+    found[N] = 1
+    nextfile
+  }
+}
+
+# Setext header marker.
+/^(=+|-+)$/ {
+  found[N] = 1
+  nextfile
+}
+
+# Consume more of the title.
+{
+  strip()
+  if (title[N] == "") {
+    title[N] = $0
+  } else {
+    title[N] = title[N] " " $0
+  }
+}
+
+END {
+  # Print titles in order.
+  for (i = 1; i <= N; i++) {
+    if (!found[i]) {
+      print     # empty line
+      continue
+    }
+    if (length(title[i]) > MAX_LENGTH)
+      title[i] = substr(title[i], 1, MAX_LENGTH) "..."
+    print title[i]
+  }
+}

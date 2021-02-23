@@ -1,17 +1,12 @@
 # Directories.
 FROM ?= src
-TO   ?= www
+TO   ?= local
 WITH ?= assets
 
-# Deployment URL.
+# Deployment.
 DEPLOY_URL = "https://giucal.it/makesite"
-
-# Markdown converter.
-MARKDOWN = pandoc --from=commonmark+smart \
-                  --standalone \
-                  --template=templates/html.html \
-                  --css=$(BASE_URL)/style.css \
-                  --mathjax
+DEPLOY_DIR = www
+DEPLOY_BRANCH ?= $(DEPLOY_DIR)
 
 # Base URL.
 # This is set to $(DEPLOY_URL) when building.
@@ -32,40 +27,38 @@ all: $(PAGES) $(STATIC)
 
 preview: all serve
 
-deploy: commit push
+again: clean all
 
-rebuild: clean
-	# Re-building site for deployment...
-	BASE_URL=$(DEPLOY_URL) make all
+deploy: final commit push
 
-commit: rebuild
-	# Committing changes to $(TO) branch...
-	cd $(TO) && \
+final:
+	# Cleaning $(DEPLOY_DIR)...
+	git worktree remove --force $(DEPLOY_DIR)
+	git worktree add --no-checkout $(DEPLOY_DIR) $(DEPLOY_BRANCH)
+	# Building deployable version...
+	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR) make all
+
+commit:
+	# Committing changes to the $(DEPLOY_BRANCH) branch...
+	cd $(DEPLOY_DIR) && \
 	git add --all && \
 	git commit -m "Refresh" || true
 
 push:
-	# Pushing changes to $(TO) branch...
-	git push origin $(TO)
+	# Pushing changes to the $(DEPLOY_BRANCH) branch...
+	git push origin $(DEPLOY_BRANCH)
 
 clean:
 	# Cleaning $(TO)...
-	git worktree remove --force $(TO)
-	git worktree add --no-checkout $(TO)
+	rm -rf -- $(TO)
 
 # Local server.
 PORT = 8080
 HOST = "http://localhost:$(PORT)"
-LOCK = .server.lock
 
 serve:
-	# Serving site locally on port $(PORT)...
-	@ if [ -f $(LOCK) ]; then \
-	      echo >&2 "Error: A server is already running!"; \
-	      exit 1; \
-	  fi
-	@ touch -- $(LOCK)
-	@ python3 -m http.server --directory=$(TO) $(PORT); rm -- $(LOCK)
+	# Serving $(TO) locally on port $(PORT)...
+	@ bin/server $(PORT) $(TO)
 
 # Rules
 
@@ -79,11 +72,10 @@ $(TO)/%: $(WITH)/%
 $(TO)/%/index.html: $(FROM)/%.md templates/html.html
 	@ echo $< '->' '$@'
 	@ mkdir -p $(@D)
-	@ $(MARKDOWN) --metadata title="$(shell scripts/title $<)" < $< > $@
+	@ bin/markdown $< $@
 
 # Special case for Markdown pages named "index.*".
 $(TO)/%.html: $(FROM)/%.md templates/html.html
 	@ echo $< '->' '$@'
 	@ mkdir -p $(@D)
-	@ $(MARKDOWN) --metadata title="$(shell scripts/title $<)" < $< > $@
-
+	@ bin/markdown $< $@

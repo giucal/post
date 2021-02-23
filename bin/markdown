@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Markdown converter.
+
+usage() {
+    echo >&2 "Usage: "$0" [-h] [--] <source> <target>"
+    exit 2
+}
+
+getopts 'h' _ && usage
+[ "$1" = '--' ] && shift
+[ $# -ne 2 ] && usage
+
+pandoc --from=commonmark+smart \
+       --standalone \
+       --template=templates/html.html \
+       --css="$BASE_URL/style.css" \
+       --mathjax \
+       --metadata title="$(bin/title "$1")" < "$1" > "$2"

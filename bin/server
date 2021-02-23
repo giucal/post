@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# HTTP server.
+
+usage() {
+    echo >&2 "Usage: "$0" [-h] [--] <port> <directory>"
+    exit 2
+}
+
+getopts 'h' _ && usage
+[ "$1" = '--' ] && shift
+[ $# -ne 2 ] && usage
+
+LOCK=.server.lock
+
+if [ -f "$LOCK" ]; then
+    echo >&2 "Error: A server is already running!"
+    exit 1
+fi
+
+touch -- "$LOCK"
+python3 -m http.server --directory="$2" "$1"
+rm -- "$LOCK"

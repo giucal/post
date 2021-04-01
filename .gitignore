@@ -1,3 +1,2 @@
-www
-local
+# bin/server's lock file
 .server.lock

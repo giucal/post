@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Ensure that the given files are ignored by git.
+
+usage() {
+    echo >&2 "Usage: "$0" [-h] [--] [<file> ...]"
+    exit 2
+}
+
+getopts 'h' _ && usage
+[ "$1" = '--' ] && shift
+
+set -e
+
+for file; do
+    git check-ignore -q "$file" || echo "$file" >> .gitignore
+done

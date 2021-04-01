@@ -1,51 +1,73 @@
 # Directories.
-FROM ?= src
-TO   ?= local
+FROM ?= content
+TO   ?= build/local
 WITH ?= assets
 
 # Deployment.
 DEPLOY_URL = "https://giucal.it/makesite"
-DEPLOY_DIR = www
-DEPLOY_BRANCH ?= $(DEPLOY_DIR)
+DEPLOY_DIR = build/public
+DEPLOY_BRANCH ?= $(shell basename $(DEPLOY_DIR))
 
 # Base URL.
 # This is set to $(DEPLOY_URL) when building.
 BASE_URL ?= $(HOST)
 
+# Sources.
+
+# Markdown sources.
+MARKDOWN_LEAFS = $(shell find -L $(FROM) -type f -name 'index.md')
+MARKDOWN_NODES = $(shell find -L $(FROM) -type f -name '*.md' -not -name 'index.md')
+
+# Assets.
+ATTACHMENTS = $(shell find -L $(FROM) -type f -not -name '*.md' -not -name '.*')
+SITE_ASSETS = $(shell find -L $(WITH) -type f -not -name '.*')
+
 # Targets
 
-# Site static assets.
-STATIC = $(patsubst $(WITH)/%,$(TO)/%,$(shell find $(WITH) -type f))
+# Files to copy over.
+VERBATIM  = $(patsubst $(FROM)/%,$(TO)/%,$(ATTACHMENTS))
+VERBATIM += $(patsubst $(WITH)/%,$(TO)/%,$(SITE_ASSETS))
 
-# Markdown pages' targets.
-PAGES  = $(patsubst $(FROM)/%.md,$(TO)/%.html,$(shell find $(FROM) -type f -name 'index.md'))
-PAGES += $(patsubst $(FROM)/%.md,$(TO)/%/index.html,$(shell find $(FROM) -type f -name '*.md' -not -name 'index.md'))
+# HTML pages.
+PAGES  = $(patsubst $(FROM)/%.md,$(TO)/%.html,$(MARKDOWN_LEAFS))
+PAGES += $(patsubst $(FROM)/%.md,$(TO)/%/index.html,$(MARKDOWN_NODES))
 
 # Recipes
 
-all: $(PAGES) $(STATIC)
+all: draft
 
-preview: all serve
+# Build targets incrementally.
+draft: $(PAGES) $(VERBATIM)
 
-again: clean all
+# Preview the site.
+preview: draft serve
 
+# Deploy the site to the remote branch $(DEPLOY_BRANCH).
 deploy: final commit push
 
+# Prepare the deployable version of the site in $(DEPLOY_DIR).
 final:
 	# Cleaning $(DEPLOY_DIR)...
 	git worktree remove --force $(DEPLOY_DIR)
 	git worktree add --no-checkout $(DEPLOY_DIR) $(DEPLOY_BRANCH)
 	# Building deployable version...
-	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR) make all
+	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR) make
+
+# Put everything in place.
+init:
+	# Creating missing directories...
+	mkdir -p $(FROM) $(TO) $(WITH)
+	# Setting things up for deployment...
+	bin/setup-deploy $(DEPLOY_BRANCH) $(DEPLOY_DIR)
 
 commit:
-	# Committing changes to the $(DEPLOY_BRANCH) branch...
+	# Committing changes to the branch $(DEPLOY_BRANCH)...
 	cd $(DEPLOY_DIR) && \
 	git add --all && \
 	git commit -m "Refresh" || true
 
 push:
-	# Pushing changes to the $(DEPLOY_BRANCH) branch...
+	# Pushing changes to the remote branch $(DEPLOY_BRANCH)...
 	git push origin $(DEPLOY_BRANCH)
 
 clean:
@@ -58,24 +80,21 @@ HOST = "http://localhost:$(PORT)"
 
 serve:
 	# Serving $(TO) locally on port $(PORT)...
-	@ bin/server $(PORT) $(TO)
+	bin/server $(PORT) $(TO)
 
 # Rules
 
-# Copy asset as-is.
+# Copy an asset as-is.
 $(TO)/%: $(WITH)/%
-	@ echo $< '->' '$@'
 	@ mkdir -p $(@D)
-	@ cp $< $@
+	cp $< $@
 
 # Render a Markdown page.
 $(TO)/%/index.html: $(FROM)/%.md templates/html.html
-	@ echo $< '->' '$@'
 	@ mkdir -p $(@D)
-	@ bin/markdown $< $@
+	bin/markdown $< $@
 
 # Special case for Markdown pages named "index.*".
 $(TO)/%.html: $(FROM)/%.md templates/html.html
-	@ echo $< '->' '$@'
 	@ mkdir -p $(@D)
-	@ bin/markdown $< $@
+	bin/markdown $< $@

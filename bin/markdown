@@ -11,7 +11,7 @@ getopts 'h' _ && usage
 [ "$1" = '--' ] && shift
 [ $# -ne 2 ] && usage
 
-pandoc --from=commonmark+smart \
+pandoc --from=gfm+smart \
        --standalone \
        --template=templates/html.html \
        --css="$BASE_URL/style.css" \

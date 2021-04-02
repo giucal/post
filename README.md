@@ -7,17 +7,15 @@ Built with Make, pandoc, and *some* shell script.
 
 The source directory is structured as follows.
 
-  Directory          | Description
-  ------------------ | --------------------------------------------------
-  `source-directory` |
-  `├── assets      ` |  static assets (e.g. CSS, Javascript)
-  `├── bin         ` |  auxiliary scripts
-  `├── build       ` |
-  `│   ├── local   ` |  preview build
-  `│   └── public  ` |  deployment build
-  `├── content     ` |  content (e.g. posts and their static attachments)
-  `├── templates   ` |  HTML templates
-  `└── Makefile    ` |  the makefile
+  Directory      | Description
+  -------------- | --------------------------------------------------
+  `assets`       |  static assets (e.g. CSS, Javascript)
+  `bin`          |  auxiliary scripts
+  `build/local`  |  preview build
+  `build/public` |  deployment build
+  `content`      |  content (e.g. posts and their static attachments)
+  `templates`    |  HTML templates
+  `Makefile`     |  the makefile
 
 ## Use
 

@@ -3,8 +3,8 @@
 # Parse the "title" of a Markdown document.
 
 BEGIN {
-  # We trim long titles.
-  MAX_LENGTH = 100
+  # We trim very long "titles".
+  MAX_LENGTH = 500
 }
 
 function strip() {
@@ -17,40 +17,55 @@ function strip() {
 # Compute file ordinal.
 FNR == 1 { N += 1 }
 
-# Stop if the title is already too long.
-length(title[N]) > MAX_LENGTH {
-  found[N] = 1
-  nextfile
-}
-
-# ATX-style header.
-/^#+[ ]*[^ ]+/ {
-  if (title[N] == "") {
-    strip()
-    sub(/^#+[ ]*/, "")
-    title[N] = $0
-    found[N] = 1
-  }
-  nextfile
-}
-
-# Empty line.
-$0 == "" {
-  if (title[N] != "") {
-    found[N] = 1
-    nextfile
-  }
-}
-
 # Setext header marker.
+# Whatever came before was the title.
 /^(=+|-+)$/ {
   found[N] = 1
   nextfile
 }
 
-# Consume more of the title.
+/^#+[ ]*[^ ]+/ {
+  if (title[N] == "") {
+    # This is an ATX-style title.
+    strip()
+    sub(/^#+[ ]*/, "")
+    title[N] = $0
+    found[N] = 1
+    nextfile
+  }
+
+  # This line is part of the title.
+  # Example:
+  #
+  #    A title running
+  #    over a certain
+  # -> # of lines
+  #    ===============
+}
+
+# Stop if the title has become suspiciously long.
+length(title[N]) > MAX_LENGTH {
+  found[N] = 1
+  nextfile
+}
+
 {
   strip()
+}
+
+# Empty line.
+$0 == "" {
+  if (title[N] != "") {
+    # Whatever came before was the title.
+    found[N] = 1
+    nextfile
+  }
+
+  # We've read empty lines so far.
+}
+
+# Consume more of the title.
+{
   if (title[N] == "") {
     title[N] = $0
   } else {
@@ -59,10 +74,10 @@ $0 == "" {
 }
 
 END {
-  # Print titles in order.
+  # Print titles in order, one per line.
   for (i = 1; i <= N; i++) {
     if (!found[i]) {
-      print     # empty line
+      print     # no title
       continue
     }
     if (length(title[i]) > MAX_LENGTH)

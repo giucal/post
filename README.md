@@ -11,7 +11,7 @@ The source directory is structured as follows.
   -------------- | --------------------------------------------------
   `Makefile`     |  *The Makefile.*
   `assets`       |  Static assets (e.g. CSS, Javascript).
-  `bin`          |  Auxiliary scripts.
+  [`bin`](bin)   |  Auxiliary scripts.
   `build/local`  |  Preview build.
   `build/public` |  Deployment build.
   `content`      |  Content (e.g. posts and their static attachments).

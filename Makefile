@@ -12,7 +12,7 @@ DEPLOY_BRANCH ?= $(shell basename $(DEPLOY_DIR))
 # This is set to $(DEPLOY_URL) when building.
 BASE_URL ?= $(HOST)
 
-# Sources.
+# Sources
 
 # Markdown sources.
 MARKDOWN_LEAFS = $(shell find -L $(FROM) -type f -name 'index.md')
@@ -46,19 +46,15 @@ preview: draft serve
 deploy: final commit push
 
 # Prepare the deployable version of the site in $(DEPLOY_DIR).
-final:
-	# Cleaning $(DEPLOY_DIR)...
-	git worktree remove --force $(DEPLOY_DIR)
-	git worktree add --no-checkout $(DEPLOY_DIR) $(DEPLOY_BRANCH)
+final: clean-deploy-directory
 	# Building deployable version...
 	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR) make
 
-# Put everything in place.
-init:
-	# Creating missing directories...
-	mkdir -p $(FROM) $(TO) $(WITH)
-	# Setting things up for deployment...
-	bin/setup-deploy $(DEPLOY_BRANCH) $(DEPLOY_DIR)
+# Prepare the deployable version of the site in $(DEPLOY_DIR)
+# taking advantage of Make's incremental-compilation capabilities.
+final-incrementally:
+	# Build deployable version incrementally...
+	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR) make
 
 commit:
 	# Committing changes to the branch $(DEPLOY_BRANCH)...
@@ -70,16 +66,29 @@ push:
 	# Pushing changes to the remote branch $(DEPLOY_BRANCH)...
 	git push origin $(DEPLOY_BRANCH)
 
+init:
+	# Creating missing directories...
+	mkdir -p $(FROM) $(TO) $(WITH)
+	# Telling git to ignore the build directory...
+	bin/ignore $(TO)
+	# Setting things up for deployment...
+	bin/setup-deploy $(DEPLOY_BRANCH) $(DEPLOY_DIR)
+
 clean:
 	# Cleaning $(TO)...
 	rm -rf -- $(TO)
+
+clean-deploy-directory:
+	# Cleaning $(DEPLOY_DIR)...
+	git worktree remove --force $(DEPLOY_DIR)
+	git worktree add --no-checkout $(DEPLOY_DIR) $(DEPLOY_BRANCH)
 
 # Local server.
 PORT = 8080
 HOST = "http://localhost:$(PORT)"
 
 serve:
-	# Serving $(TO) locally on port $(PORT)...
+	# Serving $(TO) on port $(PORT)...
 	bin/server $(PORT) $(TO)
 
 # Rules
@@ -89,12 +98,16 @@ $(TO)/%: $(WITH)/%
 	@ mkdir -p $(@D)
 	cp $< $@
 
-# Render a Markdown page.
-$(TO)/%/index.html: $(FROM)/%.md templates/html.html
+# Markdown
+
+MARKDOWN_DEPS = templates/html.html bin/markdown bin/title
+
+# Render a Markdown node.
+$(TO)/%/index.html: $(FROM)/%.md $(MARKDOWN_DEPS)
 	@ mkdir -p $(@D)
 	bin/markdown $< $@
 
-# Special case for Markdown pages named "index.*".
-$(TO)/%.html: $(FROM)/%.md templates/html.html
+# Render a Markdown leaf.
+$(TO)/%.html: $(FROM)/%.md $(MARKDOWN_DEPS)
 	@ mkdir -p $(@D)
 	bin/markdown $< $@

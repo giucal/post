@@ -37,7 +37,7 @@ The Makefile expects to be run in a Git repository:
 
     git init
 
-After setting any of the above [configuration variables](#configutation),
+After setting any of the above [configuration variables](#configuration),
 and before starting to develop your site, invoke
 
     make init
@@ -78,11 +78,11 @@ To update the build *and* preview the site:
 
 To let the server run in the background while making changes:
 
-    make serve
+    make serve &
 
 If you don't want to see the log, I recommend:
 
-    make serve 2> server.log
+    make serve 2> server.log &
 
 If something weird happens, you can inspect `server.log`.
 

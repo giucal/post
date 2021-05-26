@@ -98,6 +98,10 @@ $(TO)/%: $(WITH)/%
 	@ mkdir -p $(@D)
 	cp $< $@
 
+$(TO)/%: $(FROM)/%
+	@ mkdir -p $(@D)
+	cp $< $@
+
 # Markdown
 
 MARKDOWN_DEPS = templates/html.html bin/markdown bin/title

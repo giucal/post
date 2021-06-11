@@ -4,25 +4,25 @@ This directory contains executables (mostly scripts) that implement
 special processes, like page rendering, attribute parsing, an HTTP server, and
 so on.
 
-### `ignore`
+### [`ignore`](ignore)
 
 Manages the `.gitignore` file. Some files and directories need to be
 excluded from tracking to ensure "correct operation."
 
-### `markdown`
+### [`markdown`](markdown)
 
 Renders a Markdown document, writing a proper HTML document to disk.
 Templating is managed by this script.
 
-### `server`
+### [`server`](server)
 
 Starts a local server for previewing. Uses Python's `http.server`.
 
-### `setup-deploy`
+### [`setup-deploy`](setup-deploy)
 
 It sets up, if they aren't already, the deploy branch and work tree.
 
-### `title`
+### [`title`](title)
 
 Infers the title of a Markdown document. To this script a title is anything
 at the beginning of the document (minus empty lines). In order of preference:

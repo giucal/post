@@ -1,2 +1,5 @@
 # bin/server's lock file
 .server.lock
+
+# This file might be automatically updated to include other
+# files and directories to be ignored (e.g. build directories).

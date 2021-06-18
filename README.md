@@ -1,7 +1,7 @@
 # Makesite
 
 A blueprint for a simple static website.
-Built with Make, pandoc, and *some* shell script.
+Built with Make, Pandoc, and some shell script.
 
 ## Directory structure
 
@@ -37,12 +37,12 @@ The Makefile expects to be run in a Git repository:
 
     git init
 
-After setting any of the above [configuration variables](#configuration),
+After having set any of the above [configuration variables](#configuration),
 and before starting to develop your site, invoke
 
     make init
 
-This command ensures that the repository is correctly initialized.
+to ensure that the repository is correctly initialized.
 
 ### Workflow
 
@@ -56,15 +56,14 @@ or just
 
     make
 
-Every time you make a change to the content, issuing `make` again should be
-sufficient to compile only those files that have been affected.
-
-Sometimes, though, it's necessary to do rebuild from the ground up:
+Every time you make a change to the content, issuing `make` should be
+sufficient to rebuild only those files that have been affected.
+Sometimes, though, it's necessary to rebuild from the ground up:
 
     make clean draft
 
-Using `make -B` (same as `make draft -B`) in this case would rebuild *on top*
-of what's already there; which is not what you want.
+(Using `make -B` would rebuild *on top* of what's already there,
+which may not be what you want.)
 
 #### Local preview
 
@@ -76,15 +75,15 @@ To update the build *and* preview the site:
 
     make draft serve
 
-To let the server run in the background while making changes:
+To let the server run in the background:
 
     make serve &
 
-If you don't want to see the log, I recommend:
+If you don't want to see the log:
 
     make serve 2> server.log &
 
-If something weird happens, you can inspect `server.log`.
+(If something weird happens, you can inspect `server.log`.)
 
 ### Deploy
 
@@ -92,24 +91,24 @@ To build the deployment version:
 
     make final
 
-To commit this version as it is to the deployment branch:
+To commit such version, as it is, to the deployment branch:
 
     make commit
 
-To push changes to the remote deployment branch (assumed to have the same name):
+To push changes to the remote deployment branch:
 
     make push
 
-If the local version was OK and you feel intrepid, you can also deploy
+If the local version seems OK and you feel intrepid, you can also deploy
 the site in one step:
 
     make deploy
 
-which is of course the same as `make final commit push`.
+which is the same as `make final commit push`.
 
 #### Note
 
-The deployment version is always rebuild from scratch when you do `make final`.
+The deployment version is always rebuilt from scratch upon `make final`.
 If you're *really* intrepid, you can build it incrementally:
 
     make final-incrementally

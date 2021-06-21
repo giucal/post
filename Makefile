@@ -15,8 +15,11 @@ BASE_URL ?= $(HOST)
 # Sources
 
 # Markdown sources.
-MARKDOWN_LEAFS = $(shell find -L $(FROM) -type f -name 'index.md')
-MARKDOWN_NODES = $(shell find -L $(FROM) -type f -name '*.md' -not -name 'index.md')
+MARKDOWN_INDICES = $(shell find -L $(FROM) -type f -name 'index.md')
+MARKDOWN_READMES = $(shell find -L $(FROM) -type f -name 'README.md')
+MARKDOWN_REGULAR = $(shell find -L $(FROM) -type f -name '*.md' \
+						   -not -name 'index.md' \
+						   -not -name 'README.md')
 
 # Assets.
 ATTACHMENTS = $(shell find -L $(FROM) -type f -not -name '*.md' -not -name '.*')
@@ -29,8 +32,9 @@ VERBATIM  = $(patsubst $(FROM)/%,$(TO)/%,$(ATTACHMENTS))
 VERBATIM += $(patsubst $(WITH)/%,$(TO)/%,$(SITE_ASSETS))
 
 # HTML pages.
-PAGES  = $(patsubst $(FROM)/%.md,$(TO)/%.html,$(MARKDOWN_LEAFS))
-PAGES += $(patsubst $(FROM)/%.md,$(TO)/%/index.html,$(MARKDOWN_NODES))
+PAGES  = $(patsubst $(FROM)/%.md,$(TO)/%.html,$(MARKDOWN_INDICES))
+PAGES += $(patsubst $(FROM)/%/README.md,$(TO)/%/index.html,$(MARKDOWN_READMES))
+PAGES += $(patsubst $(FROM)/%.md,$(TO)/%/index.html,$(MARKDOWN_REGULAR))
 
 # Recipes
 
@@ -106,12 +110,16 @@ $(TO)/%: $(FROM)/%
 
 MARKDOWN_DEPS = templates/html.html bin/markdown bin/title
 
-# Render a Markdown node.
+# Render a regular Markdown node.
 $(TO)/%/index.html: $(FROM)/%.md $(MARKDOWN_DEPS)
 	@ mkdir -p $(@D)
 	bin/markdown $< $@
 
-# Render a Markdown leaf.
+# Render a Markdown leaf (index.md).
 $(TO)/%.html: $(FROM)/%.md $(MARKDOWN_DEPS)
+	@ mkdir -p $(@D)
+	bin/markdown $< $@
+# Special case for READMEs (README.md -> index.md -> index.html).
+$(TO)/%/index.html: $(FROM)/%/README.md $(MARKDOWN_DEPS)
 	@ mkdir -p $(@D)
 	bin/markdown $< $@

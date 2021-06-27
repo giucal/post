@@ -12,7 +12,7 @@ excluded from tracking to ensure "correct operation."
 ### [`markdown`](markdown)
 
 Renders a Markdown document, writing a proper HTML document to disk.
-Templating is managed by this script.
+It also takes care of templating.
 
 ### [`server`](server)
 
@@ -47,13 +47,13 @@ at the beginning of the document (minus empty lines). In order of preference:
         heading
         ----------------
 
-    Setext headings can span multiple lines because it makes sense.
-    And anyway, [the CommonMark specification agrees][cmark-setext-headings].
+    ([Setext headings can span multiple lines.][cmark-setext-headings])
 
-  - A run of text (not necessarily a paragraph!) followed by a new line or EOF.
+  - A run of text (not necessarily a paragraph!) followed by an empty line
+    or EOF.
 
-  - The empty title, "".
+  - The empty title.
 
-It trunctates very long titles.
+It trunctates long runs of text.
 
 [cmark-setext-headings]: https://spec.commonmark.org/current/#setext-headings

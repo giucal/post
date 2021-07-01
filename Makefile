@@ -16,10 +16,10 @@ BASE_URL ?= $(HOST)
 
 # Markdown sources.
 MARKDOWN_INDICES = $(shell find -L $(FROM) -type f -name 'index.md')
-MARKDOWN_READMES = $(shell find -L $(FROM) -type f -name 'README.md')
+MARKDOWN_READMES = $(shell find -L $(FROM) -type f -iname 'README.md')
 MARKDOWN_REGULAR = $(shell find -L $(FROM) -type f -name '*.md' \
 						   -not -name 'index.md' \
-						   -not -name 'README.md')
+						   -not -iname 'README.md')
 
 # Assets.
 ATTACHMENTS = $(shell find -L $(FROM) -type f -not -name '*.md' -not -name '.*')

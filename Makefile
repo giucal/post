@@ -3,6 +3,9 @@ FROM ?= content
 TO   ?= build/local
 WITH ?= assets
 
+# Content from external repositories.
+EXTERNAL =
+
 # Deployment.
 DEPLOY_URL = "https://giucal.it/makesite"
 DEPLOY_DIR = build/public
@@ -69,6 +72,12 @@ commit:
 push:
 	# Pushing changes to the remote branch $(DEPLOY_BRANCH)...
 	git push origin $(DEPLOY_BRANCH)
+
+pull:
+	# Pulling changes from external content repositories...
+	git submodule update --remote --rebase -- $(EXTERNAL)
+	# Committing changes (if any)...
+	git commit -m 'Update external content' -- $(EXTERNAL) || true
 
 init:
 	# Creating missing directories...

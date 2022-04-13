@@ -1,3 +1,3 @@
-# Posts
+# [Posts](https://giucal.it/post)
 
-No posts yet.
+Post collection.

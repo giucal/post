@@ -1,1 +1,3 @@
-../README.md
+# Posts
+
+No posts yet.

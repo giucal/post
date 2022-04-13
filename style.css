@@ -1,0 +1,48 @@
+body {
+  margin: 0 auto;
+
+  /* Keep content width reasonable. */
+  max-width: 40em;
+  min-width: 15em;
+
+  font-family: "Charter", serif;
+  font-size: 20px;
+
+  line-height: 1.2;
+  padding: 4em 1em;
+}
+
+h1 {
+  margin-bottom: 2em;
+}
+
+h2, h3, h4, h5, h6 {
+  margin-top: 1em;
+  padding-top: 1em;
+}
+
+code {
+  font-size: 90%;
+}
+
+pre {
+  font-family: inherit;
+  margin: 1em;
+  padding: 1em;
+  overflow: auto;
+}
+
+blockquote {
+  margin: 0;
+  margin: 1em;
+  padding-left: 1em;
+  color: #444444;
+  border-left: solid 5px #444444;
+}
+
+img {
+  display: block;
+  margin: auto;
+  max-width: 90%;
+  height: auto;
+}

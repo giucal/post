@@ -9,6 +9,7 @@ EXTERNAL =
 # Deployment.
 DEPLOY_URL = "https://giucal.it/makesite"
 DEPLOY_DIR = build/public
+DEPLOY_PREFIX = $(DEPLOY_DIR)
 DEPLOY_BRANCH ?= $(shell basename $(DEPLOY_DIR))
 
 # Base URL.
@@ -55,13 +56,13 @@ deploy: final commit push
 # Prepare the deployable version of the site in $(DEPLOY_DIR).
 final: clean-deploy-directory
 	# Building deployable version...
-	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR) make
+	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_PREFIX) make
 
 # Prepare the deployable version of the site in $(DEPLOY_DIR)
 # taking advantage of Make's incremental-compilation capabilities.
 final-incrementally:
 	# Build deployable version incrementally...
-	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR) make
+	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_PREFIX) make
 
 commit:
 	# Committing changes to the branch $(DEPLOY_BRANCH)...

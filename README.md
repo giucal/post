@@ -39,7 +39,7 @@ The Makefile expects to be run in a Git repository:
     git init
 
 After having set any of the above [configuration variables](#configuration),
-and before starting to develop your site, invoke
+commit your changes and invoke
 
     make init
 

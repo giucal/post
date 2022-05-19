@@ -100,10 +100,11 @@ clean-deploy-directory:
 # Local server.
 PORT = 8080
 HOST = "http://localhost:$(PORT)"
+SERVE = bin/server $(PORT) $(TO)
 
 serve:
 	# Serving $(TO) on port $(PORT)...
-	bin/server $(PORT) $(TO)
+	$(SERVE)
 
 # Rules
 

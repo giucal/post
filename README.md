@@ -30,7 +30,7 @@ Customize the following variables in the [Makefile](Makefile), if you want.
   `WITH`          | The static assets directory.
   `DEPLOY_DIR`    | The deployment build directory.
   `DEPLOY_BRANCH` | The deploy branch name. To be checked out in `DEPLOY_DIR`.
-  `DEPLOY_PREFIX` | The conventional deploy directory, e.g. `$(DEPLOY_DIR)/www`.
+  `DEPLOY_PREFIX` | The common prefix for deploy artifacts, e.g. `www`.
 
 ### Initialization
 
@@ -119,4 +119,3 @@ If you're *really* intrepid, you can build it incrementally:
 To clean the local build without rebuilding:
 
     make clean
-

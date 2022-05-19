@@ -4,12 +4,12 @@ TO   ?= build/local
 WITH ?= assets
 
 # Content from external repositories.
-EXTERNAL =
+EXTERNAL ?=
 
 # Deployment.
-DEPLOY_URL = "https://giucal.it/makesite"
-DEPLOY_DIR = build/public
-DEPLOY_PREFIX =
+DEPLOY_URL ?= "https://giucal.it/makesite"
+DEPLOY_DIR ?= build/public
+DEPLOY_PREFIX ?=
 DEPLOY_BRANCH ?= $(shell basename $(DEPLOY_DIR))
 
 # Base URL.
@@ -98,9 +98,9 @@ clean-deploy-directory:
 	git worktree add --no-checkout $(DEPLOY_DIR) $(DEPLOY_BRANCH)
 
 # Local server.
-PORT = 8080
-HOST = "http://localhost:$(PORT)"
-SERVE = bin/server $(PORT) $(TO)
+PORT ?= 8080
+HOST ?= "http://localhost:$(PORT)"
+SERVE ?= bin/server $(PORT) $(TO)
 
 serve:
 	# Serving $(TO) on port $(PORT)...

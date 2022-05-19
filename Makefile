@@ -14,7 +14,7 @@ DEPLOY_BRANCH ?= $(shell basename $(DEPLOY_DIR))
 
 # Base URL.
 # This is set to $(DEPLOY_URL) when building.
-BASE_URL ?= $(HOST)
+BASE_URL ?= "$(HOST):$(PORT)"
 
 # Sources
 
@@ -99,7 +99,7 @@ clean-deploy-directory:
 
 # Local server.
 PORT ?= 8080
-HOST ?= "http://localhost:$(PORT)"
+HOST ?= "http://localhost"
 SERVE ?= bin/server $(PORT) $(TO)
 
 serve:

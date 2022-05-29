@@ -4,16 +4,17 @@ TO   ?= build/local
 WITH ?= assets
 
 # Content from external repositories.
-EXTERNAL =
+EXTERNAL ?=
 
 # Deployment.
-DEPLOY_URL = "https://giucal.it/post"
-DEPLOY_DIR = build/public
+DEPLOY_URL ?= "https://giucal.it/post"
+DEPLOY_DIR ?= build/public
+DEPLOY_PREFIX ?=
 DEPLOY_BRANCH ?= $(shell basename $(DEPLOY_DIR))
 
 # Base URL.
 # This is set to $(DEPLOY_URL) when building.
-BASE_URL ?= $(HOST)
+BASE_URL ?= "$(HOST):$(PORT)"
 
 # Sources
 
@@ -55,13 +56,13 @@ deploy: final commit push
 # Prepare the deployable version of the site in $(DEPLOY_DIR).
 final: clean-deploy-directory
 	# Building deployable version...
-	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR) make
+	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR)/$(DEPLOY_PREFIX) make
 
 # Prepare the deployable version of the site in $(DEPLOY_DIR)
 # taking advantage of Make's incremental-compilation capabilities.
 final-incrementally:
 	# Build deployable version incrementally...
-	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR) make
+	BASE_URL=$(DEPLOY_URL) TO=$(DEPLOY_DIR)/$(DEPLOY_PREFIX) make
 
 commit:
 	# Committing changes to the branch $(DEPLOY_BRANCH)...
@@ -97,12 +98,13 @@ clean-deploy-directory:
 	git worktree add --no-checkout $(DEPLOY_DIR) $(DEPLOY_BRANCH)
 
 # Local server.
-PORT = 8080
-HOST = "http://localhost:$(PORT)"
+PORT ?= 8080
+HOST ?= "http://localhost"
+SERVE ?= bin/server $(PORT) $(TO)
 
 serve:
 	# Serving $(TO) on port $(PORT)...
-	bin/server $(PORT) $(TO)
+	$(SERVE)
 
 # Rules
 

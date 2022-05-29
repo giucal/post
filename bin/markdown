@@ -14,6 +14,8 @@ getopts 'h' _ && usage
 pandoc --from=gfm+smart \
        --standalone \
        --template=templates/html.html \
+       --include-before-body=templates/header.html \
+       --include-after-body=templates/footer.html \
        --css="$BASE_URL/style.css" \
        --mathjax \
        --metadata title="$(bin/title "$1")" < "$1" > "$2"

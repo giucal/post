@@ -1,43 +1,122 @@
-body {
-  margin: 0 auto;
+:root {
+  --light-color: #444444;
+  --rule-color: #44444422;
+  --serif: "Iowan Old Style", Charter, Garamond, Georgia, serif;
+  --monospace: Consolas, Menlo, "DejaVu Sans Mono", monospace;
+}
 
+body {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 16px;
+}
+
+main {
+  margin: 0 auto;
   /* Keep content width reasonable. */
   max-width: 40em;
   min-width: 15em;
+  padding: 1em;
+}
 
-  font-family: "Charter", serif;
+article {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  font-family: var(--serif);
   font-size: 20px;
-
   line-height: 1.2;
-  padding: 4em 1em;
 }
 
 h1 {
-  margin-bottom: 2em;
+  margin-top: 2em;
+  margin-bottom: 1.5em;
+  font-size: 3em;
+}
+
+h1:first-child {
+  margin-top: 0;
 }
 
 h2, h3, h4, h5, h6 {
-  margin-top: 1em;
-  padding-top: 1em;
+  margin: 1.5em 0 1em 0;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+h3 {
+  font-size: 1.3em;
+}
+
+h4 {
+  font-size: 1em;
+}
+
+h5 {
+  font-size: 1em;
+  font-style: italic;
+}
+
+h6 {
+  font-size: 1em;
+  font-weight: normal;
+  font-style: italic;
+}
+
+p {
+  margin: 1em 0;
+  hanging-punctuation: first last force-end;
+}
+
+a {
+  text-decoration: inherit;
+}
+
+a:link,
+a:visited {
+  color: inherit;
+}
+
+a:not(:empty)::before {
+  content: "⟨";
+}
+a:not(:empty)::after {
+  content: "⟩";
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:hover:not(empty)::before {
+  content: "⟩";
+}
+a:hover:not(empty)::after {
+  content: "⟨";
 }
 
 code {
+  font-family: var(--monospace);
   font-size: 90%;
 }
 
 pre {
-  font-family: inherit;
-  margin: 1em;
-  padding: 1em;
+  margin: 1em 0 1em 2em;
   overflow: auto;
 }
 
 blockquote {
-  margin: 0;
-  margin: 1em;
-  padding-left: 1em;
-  color: #444444;
-  border-left: solid 5px #444444;
+  margin: 1em 0 1em 2em;
+  position: relative; /* To allow positioning of ::before. */
+}
+
+blockquote::before {
+  content: "“";
+  font-size: 4em;
+  position: absolute;
+  left: -0.5em;
+  top: -0.25em;
 }
 
 img {
@@ -46,3 +125,52 @@ img {
   max-width: 90%;
   height: auto;
 }
+
+hr {
+  border: 1px solid var(--rule-color);
+}
+
+table {
+  margin: auto;
+}
+
+td {
+  text-align: left;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid var(--rule-color);
+}
+
+th, tr, td {
+  border-collapse: collapse;
+}
+
+header {
+  margin-top: 1em;
+  border-bottom: 1px solid var(--rule-color);
+  text-align: center;
+  font-size: 20px;
+}
+
+footer {
+  margin-bottom: 1em;
+  border-top: 1px solid var(--rule-color);
+  text-align: center;
+  color: var(--light-color);
+}
+
+header ul,
+footer ul {
+  display: flex;
+  justify-content: center;
+  list-style-type: none;
+}
+
+header ul li + li::before,
+footer ul li + li::before {
+  content: "|";
+  margin: 0.2em;
+}
+

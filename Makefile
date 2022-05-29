@@ -119,7 +119,11 @@ $(TO)/%: $(FROM)/%
 
 # Markdown
 
-MARKDOWN_DEPS = templates/html.html bin/markdown bin/title
+MARKDOWN_DEPS = templates/html.html \
+                templates/header.html \
+                templates/footer.html \
+                bin/markdown \
+                bin/title
 
 # Render a regular Markdown node.
 $(TO)/%/index.html: $(FROM)/%.md $(MARKDOWN_DEPS)

@@ -1,3 +1,3 @@
-# [Posts](https://giucal.it/post)
+# [Posts](https://giucal.it/posts)
 
 Posts collection.

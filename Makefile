@@ -7,7 +7,7 @@ WITH ?= assets
 EXTERNAL ?=
 
 # Deployment.
-DEPLOY_URL ?= "https://giucal.it/post"
+DEPLOY_URL ?= "https://giucal.it/posts"
 DEPLOY_DIR ?= build/public
 DEPLOY_PREFIX ?=
 DEPLOY_BRANCH ?= $(shell basename $(DEPLOY_DIR))
